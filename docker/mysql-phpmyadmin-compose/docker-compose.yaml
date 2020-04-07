@@ -1,0 +1,36 @@
+version: '3'
+services:
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        environment:
+            PMA_HOST: database
+            PMA_PORT: 3306
+            MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
+            # VIRTUAL_HOST: domain.tld.com
+            # LETSENCRYPT_HOST: domain.tld.com
+            # LETSENCRYPT_EMAIL: email@email.com
+        ports:
+        - 80:80
+        links:
+        - database:database
+        networks:
+            - mysql-compose
+    database:
+        image: mysql:latest
+        ports:
+        - 3306:3306
+        command: [
+            '--default_authentication_plugin=mysql_native_password',
+        ]
+        volumes:
+        - ./db-data-docker-mysql:/var/lib/mysql
+        environment:
+            MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
+            MYSQL_DATABASE: "${DB_NAME}"
+        networks:
+            - mysql-compose
+networks:
+    mysql-compose:
+#        driver: bridge
+
+# TThe commented lines is in case you use nginx-reverse & lets-encrypt 
